@@ -9,9 +9,10 @@ import streamlit as st
 
 ######### lists #########
 MENU = ['Preparing and Reading Datasets',
-            'Part 1: A general overview',
-            'Part 2: Analysis of Happiness index and contributing factors',
-            'Part 3: Regression model']
+        'Part 1: A general overview',
+        'Part 2: Analysis of Happiness index and contributing factors',
+        'Part 3: Regression model',
+        'Conclusions']
 
 factors = ['Ladder score','Logged GDP per capita','Social support','Healthy life expectancy',
            'Freedom to make life choices','Generosity', 'Perceptions of corruption']
@@ -111,6 +112,7 @@ def get_corr_map(df, title):
     plt.title(title)
     st.pyplot(fig)
 
+
 ######### pages #########
 def page0(df1, df2):
     st.title('Preparing and Reading Datasets')
@@ -144,6 +146,7 @@ def page0(df1, df2):
     countries_excluded_1, countries_excluded_2 = countries_excluded(df1, df2)
     st.write('Countries in 2019 not included in 2020 dataset:', countries_excluded_1)
     st.write('Countries in 2020 not included in 2019 dataset:', countries_excluded_2)
+    st.write('**Names matched!**')
 
 def page1(df1, df2):
     df1 = update_data(df1, 'Country name', 'Macedonia', 'North Macedonia')
@@ -152,12 +155,10 @@ def page1(df1, df2):
     ex1 = st.beta_expander('Country overview')
     with ex1:
         c1, c2, c3 = st.beta_columns((4,1,4))
-        c1.write("<h1 style='text-align: center; color: #1f77b4;'>Finland</h1>", unsafe_allow_html=True)
-        c1.write("<p style='text-align: center; color: black;'>Happiest country in the world<br>in 2019 and 2020</h1>",
-                 unsafe_allow_html=True)
-        c3.write("<h1 style='text-align: center; color: #ff7f0e;'>Afghanistan</h1>", unsafe_allow_html=True)
-        c3.write("<p style='text-align: center; color: black;'>Unhappiest country in the world<br>in 2019 and 2020</h1>",
-                 unsafe_allow_html=True)
+        c1.write(f'Happiest country 2019: **{df1.iloc[0,0]}**')
+        c1.write(f'Unhappiest country 2019: **{df1.iloc[-1, 0]}**')
+        c3.write(f'Happiest country 2020: **{df2.iloc[0,0]}**')
+        c3.write(f'Unhappiest country 2020: **{df2.iloc[-1,0]}**')
 
         # 2019
         st.subheader('Top 10 and bottom 10 countries 2019')
@@ -187,7 +188,7 @@ def page1(df1, df2):
 
         st.subheader('Biggeset movers')
         st.write('We will test to see which countries have the most drastic change before and during the pandemic. '
-                 'NOTE exclude countries not match')
+                 'We have to exclude countries not included in either of the datasets before that.')
 
         countries_excluded_1, countries_excluded_2 = countries_excluded(df1, df2)
         df1_excluded = df1[~df1['Country name'].isin(countries_excluded_1)].sort_values('Country name').iloc[:,[0,2]].reset_index()
@@ -201,7 +202,7 @@ def page1(df1, df2):
         change_df = pd.concat([df1_excluded, df2_excluded], axis=1)
         change_df.columns = ['Country', 'Ladder 2019', 'Ranking 2019', 'Ladder 2020', 'Ranking 2020']
         change_df['Happiness change'] = change_df['Ladder 2020'] - change_df['Ladder 2019']
-        change_df['Ranking change'] = change_df['Ranking 2020'] - change_df['Ranking 2019']
+        change_df['Ranking change'] = change_df['Ranking 2019'] - change_df['Ranking 2020']
 
         ladder_change_df = change_df.sort_values('Happiness change', ascending=False).reset_index()
         ladder_change_df = ladder_change_df.drop(ladder_change_df.index[5:144]).iloc[:,[1,-2]]
@@ -212,7 +213,9 @@ def page1(df1, df2):
         c1, c2, c3 = st.beta_columns((7,1,7))
         c1.write(ladder_change_df)
         c3.write(ranking_change_df)
-        st.write(' ')
+        st.write('It was interesting to see that most of the countries in this list have the most significant changes in '
+                 'both Ladder score and ranking. Making bar charts helped with visualizing the changes seen in the '
+                 'biggest movers in the world.\n\n')
 
         viz_change('Happiness change', ladder_change_df)
         viz_change('Ranking change', ranking_change_df)
@@ -261,25 +264,25 @@ def page1(df1, df2):
         st.pyplot(fig)
 
         st.write("Things to consider:\n"
-                 "- There is almost no change in the order of happiness index from 2019 to 2020. However, Latin America & "
-                 "Caribbean and Central & Eastern Europe switched position between 3rd and 4th place as illustrated in the "
-                 "chart above. It is safe to assume that there should be at least one factor that make these 2 regions change "
-                 "like this. Only Western, Central & Eastern EU, East Asia, Independent States, SEA and Sub-Saharan recorded "
-                 "increases in Happiness index. This might have something to do with all other variables in the context of "
-                 "a pandemic.\n"
+                 "- There is almost no change in the order of happiness index from 2019 to 2020. However, Latin America "
+                 "& Caribbean (LA & C) and Central & Eastern Europe (EU) switched position between 3rd and 4th place as "
+                 "illustrated in the chart above. Only Western, Central & Eastern EU, East Asia, Independent States, "
+                 "Southeast Asia (SEA) and Sub-Saharan Africa recorded increases in Happiness index. This might have "
+                 "something to do with all other variables in the context of a pandemic.\n"
                  "- GDP per capita and life expectancy all increased.\n"
-                 "- Social support: Latin America & Caribbean, Southeast Asia, South Asia went down.\n"
-                 "- Freedom: SEA and NA & ANZ lead but decreased from 19 to 20, South Asia also decreased\n"
-                 "- Corruption perception: South Asia, SEA, NA & ANZ went up")
+                 "- Social support: LA & C, SEA, South Asia went down.\n"
+                 "- Freedom: SEA and North America & ANZ (NA & ANZ) lead but decreased from 19 to 20, South Asia also "
+                 "decreased.\n"
+                 "- The absence of corruption: South Asia, SEA, and NA & ANZ improved.")
 
     ex3 = st.beta_expander('World overview')
     with ex3:
         world_comparison = get_world_comparison(df1, df2)
         st.write(world_comparison)
 
-        st.write("Overall, the world seems happier in 2020 than it was in 2019 despite COVID-19. However, the degrees at "
-                 "which the pandemic hit each region differ from each other, and we'll have to examine the change in the "
-                 "criteria included in the happiness score.")
+        st.write("Overall, the world seems happier in 2020 than it was in 2019 and all factors seemed more favorable "
+                 "despite COVID-19. However, the degrees to which the pandemic hit each region differ from each other, "
+                 "and we'll have to examine the change in the criteria included in the happiness score.")
 
 def page2(df1, df2):
     df1 = update_data(df1, 'Country name', 'Macedonia', 'North Macedonia')
@@ -291,22 +294,22 @@ def page2(df1, df2):
     with ex1:
         viz_country(top_bottom_2019, '2019')
         viz_country(top_bottom_2020, '2020')
-        st.write('We see that the Happiness score breakdown by 6 factors are somewhat similar for happiest countries, '
-                 'while the breakdown for unhappiest varies.')
+        st.write('By making stacked bar charts of the breakdown scores for top 10 and bottom 10 countries, we see that '
+                 'the Happiness score breakdown by 6 factors are somewhat similar for happiest countries, while the '
+                 'breakdown scores for unhappiest ones varies.')
 
     ex2 = st.beta_expander('Happy versus Unhappy countries in 2020')
     with ex2:
         st.write("First, we will categorize countries into 2 classes: happy (above mean Ladder score) and unhappy (below "
-                 "mean Ladder score). By using one-way ANOVA testing, we will see if there are significant differences "
+                 "mean Ladder score). By using t-tests, we will see if there are significant differences "
                  "between the mean values of each factors among happy and unhappy countries.\n\n"
                  "For each factor (Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life "
-                 "choices, Perceptions of corruption. Generosity): \n"
+                 "choices, Perceptions of corruption, Generosity): \n"
                  "- **Null hypothesis:** Happy and unhappy countries have the same mean values of the factor; or $H_0: μ_1 = μ_2$ \n"
-                 "- **Alternative hypothesis:** Happy and unhappy countries do not have the same mean values of the factor; or $H_1: μ_1 \neq μ_2$")
+                 "- **Alternative hypothesis:** Happy and unhappy countries do not have the same mean values of the factor; or $H_1: μ_1 != μ_2$")
 
         # ladder score
         world_comparison = get_world_comparison(df1, df2)
-        #world_ladder_mean_2019 = world_comparison.iloc[0,1]
         world_ladder_mean_2020 = world_comparison.iloc[0,2]
 
         for x in factors[1:]:
@@ -340,21 +343,16 @@ def page2(df1, df2):
                  "their direct effects on the final score.\n\n"
                  "As tested earlier, Generosity index among happy and unhappy countries does not have a significant "
                  "difference. The regression plot here also supports the result that Generosity has no clear correlation "
-                 "with Ladder score.\n\n"
-                 "The first 4 factors are positively correlated with\n\n"
-                 "Perceptions of corruption has 1 outlier (low Perceptions of corruption but low Ladder score), but we "
-                 "can keep it in our analysis since the correlation between this factor and Happiness index might not "
-                 "change significantly by the exclusion of the latter.\n\n"
-                 "NOTE")
+                 "with Ladder score. On the other hands, the first four factors were positively correlated with Ladder score.")
 
-        st.write("**Correlated pairs of variables on Ladder score in 2020:** According to the analysis in Part 1, we "
-                 "found that most of the top 10 countries are in Western Europe, while most of the bottom 10 are in "
-                 "Sub-Saharan Africa.\n\n"
-                 "GDP per capita and life expectancy are the most representative variables that are mostly strongly "
-                 "correlated (as seen in correlation matrix), so we'll check the relationship between these two variables. "
-                 "Social support and Freedom relationship is fairly strong, and the correlation between Corruption "
-                 "perception and Freedom are is negative and the strongest between the latter and other factors, so we "
-                 "will produce visualizations to better understand these relationships on Happiness index.")
+        st.write("**Correlated pairs of variables on Ladder score in 2020:** GDP per capita and life expectancy are the "
+                 "most representative variables that were mostly strongly correlated (as seen in correlation matrices), "
+                 "so we would check the relationship between these two variables. Social support and Freedom relationship "
+                 "was fairly strong, and the correlation between Corruption perception and Freedom was negative and the "
+                 "strongest between the latter and other factors.\n\n"
+                 "We will produce visualizations to better understand these relationships on Happiness index, with "
+                 "Western EU, and Sub-Saharan Africa highlighted because we found that most of the top 10 countries are "
+                 "in Western Europe, while most of the bottom 10 are in Sub-Saharan Africa.")
 
         df_copy = df2.copy()
         conditions = [(df_copy['Regional indicator'] == 'Western Europe'), (df_copy['Regional indicator'] == 'Sub-Saharan Africa'),
@@ -369,15 +367,22 @@ def page2(df1, df2):
         # Corruption perceptions and Freedom on Ladder score
         viz_factors(df_copy, world_ladder_mean_2020, 'Perceptions of corruption', 'Freedom to make life choices')
 
-        st.write("NOTE\n\n"
-                 "Indeed, all countries from Western EU are above the average line. This is because they have very high "
+        st.write("Indeed, all countries from Western EU are above the average line. This is because they have very high "
                  "GDP per capita, life expectancy, good social support and freedom to make life choices, although "
-                 "corruption perceptions vary and only play a minor role in determining a high Ladder score.\n\n"
-                 "SIMILAR TO EU On the other spectrum, all Sub-Saharan African countries are below the line with the "
-                 "exception of a country below:")
+                 "corruption perceptions vary and only play a minor role in determining a high Ladder score.")
 
         # African outlier
+        st.write("On the other spectrum, all Sub-Saharan African countries are below the line, having low GDP per capita, "
+                 "life expectancy, good social support and freedom to make life choices, with the exception of the "
+                 "country below:")
         st.write(df2[(df2['Ladder score'] > world_ladder_mean_2020) & (df2['Regional indicator'] == 'Sub-Saharan Africa')])
+
+        # corruption outlier
+        st.write("There was 1 Sub-Saharan African outlier (low Perceptions of corruption but low Ladder score) on the "
+                 "Corruption-Freedom chart (low Perceptions of corruption but low Ladder score), but we can keep it in "
+                 "our analysis since the correlation between this factor and Happiness index might not change significantly "
+                 "by the exclusion of the latter.")
+        st.write(df2[(df2['Perceptions of corruption'] < 0.2) & (df2['Regional indicator'] == 'Sub-Saharan Africa')])
 
     ex4 = st.beta_expander("Which factors affect the change in happiness on a regional scale?")
     with ex4:
@@ -416,7 +421,7 @@ def page2(df1, df2):
                  "recording decreases in Happiness index. Specifically for each region, there are several unfavorable "
                  "variables that might drag the numbers down:\n\n"
                  "- North America & ANZ: freedom, corruption perception, generosity\n"
-                 "- Latin America & Caribbean: social support, corruption"
+                 "- Latin America & Caribbean: social support, corruption\n"
                  "- South Asia: social support, freedom")
 
         regions = ['North America and ANZ','Latin America and Caribbean','South Asia']
@@ -441,7 +446,9 @@ def page2(df1, df2):
                  "- In North America & ANZ: Generosity has the greatest effect in the decrease in Happiness index."
                  "- In Latin America & Caribbean: Social support has the greatest effect in the decrease in Happiness index."
                  "- In South Asia: There is no factor that drastically drag its Happiness index down.\n\n"
-                 "EXPAND In the context of the COVID-19 pandemic,")
+                 "In the context of the COVID-19 pandemic, it is easily understood that social support, generosity and "
+                 "possibly freedom are viewed worsened by these regions where the rate of infection was accelerating on "
+                 "a daily basis in 2020.")
 
 def page3(df1, df2):
     df1 = update_data(df1, 'Country name', 'Macedonia', 'North Macedonia')
@@ -450,12 +457,12 @@ def page3(df1, df2):
              "independent variables. To simplify it, we can build a regression model that directly calculates the "
              "Happiness index based on the raw data. We'll keep Generosity in the equation since for some countries, "
              "this index composes of a considerable share in the overall Happiness index.\n\n"
-             "Feeding 2019 and 2020 data to get a better model.")
+             "Training the model with 2019 and 2020 data would help get more accurate results.")
 
     ex1 = st.beta_expander('Splitting datasets into 2 portions')
     with ex1:
-        st.write('1 for training and 1 for testing: \n\n'
-                 'choose approximately 80% dataset to train, 20% to test')
+        st.write('I randomly selected approximately 80% of the dataset to train, 20% to test, so we ended up having 241 '
+                 'data for training and 61 for testing.')
         X = pd.concat([df1,df2])[factors[1:]].reset_index(drop=True)
         y = pd.concat([df1,df2])['Ladder score'].reset_index(drop=True)
 
@@ -480,14 +487,14 @@ def page3(df1, df2):
         y_pred = regr.predict(X_test)
 
         # intercept and coefficients
-        st.write('Intercept:', float(regr.intercept_))
-        st.write('\nCoefficients:', pd.Series(regr.coef_, index=X.columns))
+        st.write('**Intercept:**', float(regr.intercept_))
+        st.write('**Coefficients:**', pd.Series(regr.coef_, index=X.columns))
 
         # mean squared error
-        st.write('\nMean squared error: %.2f'% mean_squared_error(y_test, y_pred))
+        st.write('**Mean squared error:** %.2f'% mean_squared_error(y_test, y_pred))
 
         # coefficient of determination: 1 is perfect prediction
-        st.write('\nCoefficient of determination: %.2f' % r2_score(y_test, y_pred))
+        st.write('**Coefficient of determination:** %.2f' % r2_score(y_test, y_pred))
 
         st.write(' ')
         # compare actual and predicted Ladder scores
@@ -495,30 +502,77 @@ def page3(df1, df2):
         y_comparison.columns = ['Actual Ladder', 'Predicted Ladder']
 
         st.write(y_comparison)
-        st.write("The reason why the predicted Ladder score is not similar to the actual score is because the original "
-                 "equation accounts for residual errors (represented as Residual + Dystopian index). The above model is "
-                 "the closest I can predict without including residual error.")
+        st.write("The coefficients above align with the correlation matrix in Part 2, that is, only the perceptions of "
+                 "corruption with a negative correlation with happiness has a negative coefficient.\n\n"
+                 "The reason why the predicted Ladder score is not similar to the actual score is because the original "
+                 "equation accounts for residual errors (represented as Residual + Dystopian index). The built model had "
+                 "not accounted for other confounding factors or residual errors, so the model was the closest I could "
+                 "predict with just six factors.")
 
+def page4():
+    st.title('Conclusions')
+
+    st.header("**1**\n\n")
+    st.write("The world is happier despite COVID-19.")
+
+    st.header("**2**\n\n")
+    st.write("GPD per capita, life expectancy, social support and freedom to make life choices are strongly correlated "
+             "with each other and with happiness, so it is safe to assume that by just looking at a minimum of two of "
+             "these factors, we can guess which country is unhappy or unhappy.")
+
+    st.header("**3**\n\n")
+    st.write("European countries are the happiest thanks to their high living standards, while African countries suffer "
+             "the most due to low living standards and corruption.")
+
+    st.header("**4**\n\n")
+    c1, c2, c3 = st.beta_columns((4,1,4))
+    c1.write("<h1 style='text-align: center; color: #1f77b4;'>Finland</h1>", unsafe_allow_html=True)
+    c1.write("<p style='text-align: center; color: black;'>Happiest country in the world<br>in 2019 and 2020</h1>",
+             unsafe_allow_html=True)
+    c3.write("<h1 style='text-align: center; color: #ff7f0e;'>Afghanistan</h1>", unsafe_allow_html=True)
+    c3.write("<p style='text-align: center; color: black;'>Unhappiest country in the world<br>in 2019 and 2020</h1>",
+             unsafe_allow_html=True)
+
+    st.header("**5**\n\n")
+    st.write("In the context of the COVID-19 pandemic, social support, generosity and possibly freedom are"
+             "viewed more negatively by some regions where the rate of infection was accelerating on a"
+             "daily basis in 2020.")
+
+    st.header("**6**\n\n")
+    st.write("The regression model only accounts for the existing factors and has not yet considered any "
+             "other confounding determinants that decide whether a country is happier than another.")
 
 
 def main():
     st.sidebar.title('MA 346 Final Project Spring 2021')
-    st.sidebar.write('World Happiness Index Report 2019 and 2020\n\n'
+    st.sidebar.write('Analysis on the World Happiness Index of 2019 and 2020\n\n'
                      'Linh Tran - 04/26/2021\n\n'
                      'MA 346 Data Science\n\n'
                      'Professor  Chow\n\n'
-                     '**Dashboard link:** xxx')
-
+                     'Bentley University\n\n'
+                     '**Dashboard link:** https://final-project-happiness-index.herokuapp.com/')
     df1, df2 = import_data()
-    countries_excluded_1, countries_excluded_2 = countries_excluded(df1, df2)
-
     select = st.sidebar.selectbox('Choose Section', MENU)
+
+    st.sidebar.write("The Ladder scores, or happiness indices, are estimated by the extent to which each of six factors – "
+             "economic production, social support, life expectancy, freedom, absence of corruption, and generosity – "
+             "contribute to making life evaluations higher in each country than they are in Dystopia. This hypothetical "
+             "country has values equal to the world’s lowest national averages for each of the six factors and is set as "
+             "a benchmark for any countries in the world. Dystopia has happiness scores of 1.97 in 2019 and 2.43 in 2020, "
+             "which have no impact on the total score reported for each country, but they do explain why some countries "
+             "rank higher than others do.")
+
     if select == MENU[0]:
         page0(df1, df2)
     elif select == MENU[1]:
         page1(df1, df2)
     elif select == MENU[2]:
         page2(df1, df2)
-    else:
+    elif select == MENU[3]:
         page3(df1, df2)
+    else:
+        page4()
+
+
+######### main program #########
 main()
