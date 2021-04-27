@@ -150,7 +150,7 @@ def page0(df1, df2):
 
 def page1(df1, df2):
     df1 = update_data(df1, 'Country name', 'Macedonia', 'North Macedonia')
-    st.title('Part 1: A general overview')
+    st.title('A general overview')
 
     ex1 = st.beta_expander('Country overview')
     with ex1:
