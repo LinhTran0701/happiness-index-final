@@ -305,8 +305,8 @@ def page2(df1, df2):
                  "between the mean values of each factors among happy and unhappy countries.\n\n"
                  "For each factor (Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life "
                  "choices, Perceptions of corruption, Generosity): \n"
-                 "- **Null hypothesis:** Happy and unhappy countries have the same mean values of the factor; or $H_0: μ_1 = μ_2$ \n"
-                 "- **Alternative hypothesis:** Happy and unhappy countries do not have the same mean values of the factor; or $H_1: μ_1 != μ_2$")
+                 "- **Null hypothesis:** Happy and unhappy countries have the same mean values of the factor; or $H_0: \mu_1 = \mu_2$ \n"
+                 "- **Alternative hypothesis:** Happy and unhappy countries do not have the same mean values of the factor; or $H_1: \mu_1 \neq \mu_2$")
 
         # ladder score
         world_comparison = get_world_comparison(df1, df2)
