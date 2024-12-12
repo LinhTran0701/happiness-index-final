@@ -362,7 +362,7 @@ def page2(df1, df2):
                       ~(df_copy['Regional indicator'].isin(['Western Europe', 'Sub-Saharan Africa']))  # 'Others' for all other regions
                      ]
         values = ['Western Europe', 'Sub-Saharan Africa', 'Others']
-        df_copy['Category'] = np.select(conditions, values)
+        df_copy['Category'] = np.select(conditions, values, default='Unknown')
 
         # Life expectancy and GDP per capita on Ladder score
         viz_factors(df_copy, world_ladder_mean_2020, 'Healthy life expectancy', 'Logged GDP per capita')
