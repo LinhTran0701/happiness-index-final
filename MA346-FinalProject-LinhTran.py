@@ -357,8 +357,10 @@ def page2(df1, df2):
                  "in Western Europe, while most of the bottom 10 are in Sub-Saharan Africa.")
 
         df_copy = df2.copy()
-        conditions = [(df_copy['Regional indicator'] == 'Western Europe'), (df_copy['Regional indicator'] == 'Sub-Saharan Africa'),
-                      (df_copy['Regional indicator'] != 'Western Europe') & (df_copy['Regional indicator'] != 'Sub-Saharan Africa')]
+        conditions = [(df_copy['Regional indicator'] == 'Western Europe'), 
+                      (df_copy['Regional indicator'] == 'Sub-Saharan Africa'),
+                      ~(df_copy['Regional indicator'].isin(['Western Europe', 'Sub-Saharan Africa']))  # 'Others' for all other regions
+                     ]
         values = ['Western Europe', 'Sub-Saharan Africa', 'Others']
         df_copy['Category'] = np.select(conditions, values)
 
