@@ -295,18 +295,20 @@ def page2(df1, df2):
         viz_country(top_bottom_2019, '2019')
         viz_country(top_bottom_2020, '2020')
         st.write('By making stacked bar charts of the breakdown scores for top 10 and bottom 10 countries, we see that '
-                 'the Happiness score breakdown by 6 factors are somewhat similar for happiest countries, while the '
+                 'the Happiness score breakdown by 6 factors is somewhat similar for the happiest countries, while the '
                  'breakdown scores for unhappiest ones varies.')
 
     ex2 = st.expander('Happy versus Unhappy countries in 2020')
     with ex2:
         st.write("First, we will categorize countries into 2 classes: happy (above mean Ladder score) and unhappy (below "
                  "mean Ladder score). By using t-tests, we will see if there are significant differences "
-                 "between the mean values of each factors among happy and unhappy countries.\n\n"
+                 "between the mean values of each factor among happy and unhappy countries.\n\n"
                  "For each factor (Logged GDP per capita, Social support, Healthy life expectancy, Freedom to make life "
-                 "choices, Perceptions of corruption, Generosity): \n"
-                 "- **Null hypothesis:** Happy and unhappy countries have the same mean values of the factor; or $H_0: \mu_1 = \mu_2$ \n"
-                 "- **Alternative hypothesis:** Happy and unhappy countries do not have the same mean values of the factor; or $H_1: \mu_1 \neq \mu_2$")
+                 "choices, Perceptions of corruption, Generosity): \n")
+        st.write("- **Null hypothesis:** Happy and unhappy countries have the same mean values of the factor; or ")
+        st.latex(r"H_0: \mu_1 = \mu_2")
+        st.write("- **Alternative hypothesis:** Happy and unhappy countries do not have the same mean values of the factor; or ")
+        st.latex(r"H_1: \mu_1 \neq \mu_2")
 
         # ladder score
         world_comparison = get_world_comparison(df1, df2)
