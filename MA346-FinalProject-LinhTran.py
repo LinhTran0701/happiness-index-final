@@ -550,7 +550,7 @@ def main():
                      'MA 346 Data Science\n\n'
                      'Professor  Chow\n\n'
                      'Bentley University\n\n'
-                     '**Dashboard link:** https://final-project-happiness-index.herokuapp.com/')
+                     '**Dashboard link:** https://happiness-index-ma346.streamlit.app/')
     df1, df2 = import_data()
     select = st.sidebar.selectbox('Choose Section', MENU)
 
