@@ -93,7 +93,7 @@ def update_data(df, column, old, new):
 
 def get_top_bottom(df):
     top_bottom = df.copy()
-    top_bottom.drop(top_bottom.index[10:-10],0,inplace=True)
+    top_bottom.drop(top_bottom.index[10:-10],axis=0,inplace=True)
     return top_bottom
 
 def get_world_comparison(df1, df2):
@@ -152,7 +152,7 @@ def page1(df1, df2):
     df1 = update_data(df1, 'Country name', 'Macedonia', 'North Macedonia')
     st.title('A general overview')
 
-    ex1 = st.beta_expander('Country overview')
+    ex1 = st.expander('Country overview')
     with ex1:
         c1, c2, c3 = st.beta_columns((4,1,4))
         c1.write(f'Happiest country 2019: **{df1.iloc[0,0]}**')
@@ -220,7 +220,7 @@ def page1(df1, df2):
         viz_change('Happiness change', ladder_change_df)
         viz_change('Ranking change', ranking_change_df)
 
-    ex2 = st.beta_expander('Regional overview')
+    ex2 = st.expander('Regional overview')
     with ex2:
         # factors by region
         mean_region_2019 = pd.DataFrame(df1.groupby('Regional indicator')[factors].mean())
@@ -275,7 +275,7 @@ def page1(df1, df2):
                  "decreased.\n"
                  "- The absence of corruption: South Asia, SEA, and NA & ANZ improved.")
 
-    ex3 = st.beta_expander('World overview')
+    ex3 = st.expander('World overview')
     with ex3:
         world_comparison = get_world_comparison(df1, df2)
         st.write(world_comparison)
@@ -290,7 +290,7 @@ def page2(df1, df2):
     top_bottom_2019 = get_top_bottom(df1)
     top_bottom_2020 = get_top_bottom(df2)
 
-    ex1 = st.beta_expander('Breakdown by top and bottom countries')
+    ex1 = st.expander('Breakdown by top and bottom countries')
     with ex1:
         viz_country(top_bottom_2019, '2019')
         viz_country(top_bottom_2020, '2020')
@@ -298,7 +298,7 @@ def page2(df1, df2):
                  'the Happiness score breakdown by 6 factors are somewhat similar for happiest countries, while the '
                  'breakdown scores for unhappiest ones varies.')
 
-    ex2 = st.beta_expander('Happy versus Unhappy countries in 2020')
+    ex2 = st.expander('Happy versus Unhappy countries in 2020')
     with ex2:
         st.write("First, we will categorize countries into 2 classes: happy (above mean Ladder score) and unhappy (below "
                  "mean Ladder score). By using t-tests, we will see if there are significant differences "
@@ -324,7 +324,7 @@ def page2(df1, df2):
         st.write("There is no significance difference between Generosity index between happy and unhappy countries, and "
                  "that is why the explained portion by Generosity is often the lowest in the overall Happiness index equation.")
 
-    ex3 = st.beta_expander('Correlation between factors')
+    ex3 = st.expander('Correlation between factors')
     with ex3:
         st.write("**Correlation matrix:** We will bring in all independent variables here and also include the scores, "
                  "explained by those factors, that contributed to the final scores that indicate Happiness index.")
@@ -384,7 +384,7 @@ def page2(df1, df2):
                  "by the exclusion of the latter.")
         st.write(df2[(df2['Perceptions of corruption'] < 0.2) & (df2['Regional indicator'] == 'Sub-Saharan Africa')])
 
-    ex4 = st.beta_expander("Which factors affect the change in happiness on a regional scale?")
+    ex4 = st.expander("Which factors affect the change in happiness on a regional scale?")
     with ex4:
         st.write('To answer this question, we can first examine the score breakdown in terms of the 6 factors.')
 
@@ -459,7 +459,7 @@ def page3(df1, df2):
              "this index composes of a considerable share in the overall Happiness index.\n\n"
              "Training the model with 2019 and 2020 data would help get more accurate results.")
 
-    ex1 = st.beta_expander('Splitting datasets into 2 portions')
+    ex1 = st.expander('Splitting datasets into 2 portions')
     with ex1:
         st.write('I randomly selected approximately 80% of the dataset to train, 20% to test, so we ended up having 241 '
                  'data for training and 61 for testing.')
@@ -480,7 +480,7 @@ def page3(df1, df2):
         st.write('Number of dependent variable values for training:', len(y_train))
         st.write('Number of dependent variable values for testing:',  len(y_test))
 
-    ex2 = st.beta_expander('Building and fitting a regression model')
+    ex2 = st.expander('Building and fitting a regression model')
     with ex2:
         regr = linear_model.LinearRegression()
         regr.fit(X_train, y_train)
