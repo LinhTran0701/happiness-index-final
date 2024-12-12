@@ -154,7 +154,7 @@ def page1(df1, df2):
 
     ex1 = st.expander('Country overview')
     with ex1:
-        c1, c2, c3 = st.beta_columns((4,1,4))
+        c1, c2, c3 = st.columns((4,1,4))
         c1.write(f'Happiest country 2019: **{df1.iloc[0,0]}**')
         c1.write(f'Unhappiest country 2019: **{df1.iloc[-1, 0]}**')
         c3.write(f'Happiest country 2020: **{df2.iloc[0,0]}**')
@@ -165,7 +165,7 @@ def page1(df1, df2):
         top_bottom_2019 = get_top_bottom(df1)
         top2019_count = top_bottom_2019[:10].value_counts('Regional indicator')
         bottom2019_count = top_bottom_2019[-10:].value_counts('Regional indicator')
-        c1, c2, c3 = st.beta_columns((4,1,4))
+        c1, c2, c3 = st.columns((4,1,4))
         c1.write('Top 10 in 2019:')
         c1.write(top2019_count)
         c3.write('Bottom 10 in 2019:')
@@ -176,7 +176,7 @@ def page1(df1, df2):
         top_bottom_2020 = get_top_bottom(df2)
         top2020_count = top_bottom_2020[:10].value_counts('Regional indicator')
         bottom2020_count = top_bottom_2020[-10:].value_counts('Regional indicator')
-        c1, c2, c3 = st.beta_columns((4,1,4))
+        c1, c2, c3 = st.columns((4,1,4))
         c1.write('Top 10 in 2020:')
         c1.write(top2020_count)
         c3.write('Bottom 10 in 2020:')
@@ -210,7 +210,7 @@ def page1(df1, df2):
         ranking_change_df = change_df.sort_values('Ranking change', ascending=False).reset_index()
         ranking_change_df = ranking_change_df.drop(ranking_change_df.index[5:144]).iloc[:,[1,-1]]
 
-        c1, c2, c3 = st.beta_columns((7,1,7))
+        c1, c2, c3 = st.columns((7,1,7))
         c1.write(ladder_change_df)
         c3.write(ranking_change_df)
         st.write('It was interesting to see that most of the countries in this list have the most significant changes in '
@@ -525,7 +525,7 @@ def page4():
              "the most due to low living standards and corruption.")
 
     st.header("**4**\n\n")
-    c1, c2, c3 = st.beta_columns((4,1,4))
+    c1, c2, c3 = st.columns((4,1,4))
     c1.write("<h1 style='text-align: center; color: #1f77b4;'>Finland</h1>", unsafe_allow_html=True)
     c1.write("<p style='text-align: center; color: black;'>Happiest country in the world<br>in 2019 and 2020</h1>",
              unsafe_allow_html=True)
